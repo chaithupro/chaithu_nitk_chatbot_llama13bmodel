@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot - NITK Project</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #header {
+            text-align: center;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: relative;
+        }
+
+        #logo {
+            width: 100px; /* Adjust the width as needed */
+            height: auto;
+            border-radius: 8px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        #chat-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 300px;
+            max-width: 100%;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        #chat-history {
+            padding: 16px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        #user-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 16px;
+        }
+
+        #user-input-field {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        #send-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #send-button:hover {
+            background-color: #45a049;
+        }
+
+        #footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+        }
+
+        #footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img id="logo" src="C:\Users\ygnan\Desktop\download.jpeg" alt="NITK Logo">
+        <h1>National Institute of Technology Karnataka, Surathkal</h1>
+        <h2>Department of Information Technology</h2>
+	<p>Project by: Chaithanya Swaroop (Roll No: 211AI010) and Gnana Sagar (Roll No: 211AI042)</p>
+        <p>Project done under the guidance of Prof. Anand Kumar</p>
+    </div>
+
+    <h1 style="text-align: center; color: #333; margin-top: 20px;">Chatbot</h1>
+    <div id="chat-container">
+        <div id="chat-history"></div>
+        <div id="user-input">
+            <input type="text" id="user-input-field" placeholder="Type your message...">
+            <button id="send-button" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="footer">
+        <p>&copy; 2023 NITK Chatbot Project</p>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("user-input-field").value;
+
+            // Add user message to chat history
+            var chatHistory = document.getElementById("chat-history");
+            chatHistory.innerHTML += '<p style="margin: 8px 0; padding: 8px; background-color: #4CAF50; color: white; border-radius: 8px; max-width: 70%; word-wrap: break-word; align-self: flex-end;">User: ' + userInput + '</p>';
+
+            // Make AJAX request to Flask app
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/chat", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+
+                    // Display chatbot responses
+                    chatHistory.innerHTML += '<p style="margin: 8px 0; padding: 8px; background-color: #ddd; border-radius: 8px; max-width: 70%; word-wrap: break-word;">Chatbot (ConversationalRetrievalChain): ' + response.qa_chain + '</p>';
+                    chatHistory.innerHTML += '<p style="margin: 8px 0; padding: 8px; background-color: #ddd; border-radius: 8px; max-width: 70%; word-wrap: break-word;">Chatbot (Hugging Face Model): ' + response.hugging_face + '</p>';
+                }
+            };
+            xhr.send("user_input=" + userInput);
+
+            // Clear user input field
+            document.getElementById("user-input-field").value = '';
+        }
+    </script>
+</body>
+</html>
